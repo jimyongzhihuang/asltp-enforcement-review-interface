@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ASLTP Enforcement Review Interface</title>
+  <style>
+    :root {
+      --bg-main: #f4f6f8;
+      --panel-bg: #ffffff;
+      --border: #d1d5db;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --human: #2563eb;
+      --system: #dc2626;
+      --warning: #f59e0b;
+      --success: #059669;
+      --dark: #111827;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg-main);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    header {
+      background: var(--dark);
+      color: white;
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 650;
+    }
+
+    .tag {
+      background: #374151;
+      padding: 6px 10px;
+      border-radius: 4px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 12px;
+    }
+
+    .container {
+      max-width: 1380px;
+      margin: 20px auto;
+      padding: 0 20px 40px;
+    }
+
+    .notice {
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      border-left: 5px solid var(--warning);
+      border-radius: 6px;
+      padding: 12px 14px;
+      margin-bottom: 18px;
+    }
+
+    .root-banner {
+      background: var(--panel-bg);
+      border: 1px solid var(--border);
+      border-left: 5px solid var(--system);
+      padding: 14px;
+      border-radius: 6px;
+      margin-bottom: 20px;
+    }
+
+    .grid-two {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .panel {
+      background: var(--panel-bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+    }
+
+    .panel-header {
+      padding: 12px 14px;
+      font-weight: 700;
+      border-bottom: 1px solid var(--border);
+      background: #f8fafc;
+    }
+
+    .panel-header.human {
+      color: var(--human);
+      background: #eff6ff;
+      border-bottom: 2px solid var(--human);
+    }
+
+    .panel-header.system {
+      color: var(--system);
+      background: #fef2f2;
+      border-bottom: 2px solid var(--system);
+    }
+
+    .panel-body {
+      padding: 16px;
+    }
+
+    .raw-box {
+      background: #f8fafc;
+      border: 1px dashed #cbd5e1;
+      border-radius: 6px;
+      padding: 14px;
+      font-style: italic;
+      min-height: 94px;
+    }
+
+    .system-box {
+      background: #fef2f2;
+      border-left: 4px solid var(--system);
+      border-radius: 6px;
+      padding: 14px;
+      min-height: 94px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 4px;
+      margin: 3px 4px 3px 0;
+      background: #fee2e2;
+      color: #991b1b;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .matrix {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .matrix th, .matrix td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+
+    .matrix th {
+      background: #f8fafc;
+      font-weight: 700;
+      text-align: left;
+    }
+
+    .stage {
+      font-weight: 800;
+      color: #111827;
+      white-space: nowrap;
+    }
+
+    .checkbox-cell {
+      text-align: center;
+      vertical-align: middle !important;
+    }
+
+    input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+    }
+
+    .closure {
+      background: #1e293b;
+      color: white;
+      border-radius: 6px;
+      padding: 18px;
+    }
+
+    .closure-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    textarea {
+      width: 100%;
+      height: 112px;
+      background: #334155;
+      color: white;
+      border: 1px solid #475569;
+      border-radius: 6px;
+      padding: 10px;
+      box-sizing: border-box;
+      resize: vertical;
+      font-family: inherit;
+    }
+
+    button {
+      width: 100%;
+      height: 100%;
+      min-height: 112px;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    button.locked {
+      background: #475569;
+      color: #94a3b8;
+      cursor: not-allowed;
+    }
+
+    button.active {
+      background: var(--success);
+      color: white;
+      cursor: pointer;
+    }
+
+    .small {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .closure .small {
+      color: #cbd5e1;
+    }
+
+    @media (max-width: 850px) {
+      .grid-two, .closure-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>ASLTP Enforcement Review Interface</h1>
+    <div class="tag">CASE: DEMO-ENF-2026-001 · PRE-CONSEQUENCE CLOSURE GATE</div>
+  </header>
+
+  <main class="container">
+    <div class="notice">
+      <strong>Fictional academic prototype.</strong> This interface does not represent any real person, real public authority, or real enforcement matter.
+    </div>
+
+    <section class="root-banner">
+      <strong>Detection Root</strong><br />
+      Recorded fact: vehicle recorded at <strong>142 km/h</strong> in a <strong>90 km/h</strong> zone.<br />
+      Current machine pathway: <strong style="color: var(--system);">Automated Penalty Route</strong> — paused for public-law closure.
+    </section>
+
+    <section class="grid-two">
+      <div class="panel">
+        <div class="panel-header human">Left Column: Raw Human Response</div>
+        <div class="panel-body">
+          <p><strong>Original response submitted through portal:</strong></p>
+          <div class="raw-box">
+            “Please stop sending automated messages. I am trying to reach a human officer. There is an emergency and I need to explain what happened before any penalty is finalized.”
+          </div>
+          <p class="small">
+            Antidote reading: urgency and repeated contact may indicate a legally relevant explanation, not necessarily non-compliance.
+          </p>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header system">Right Column: System Interpretation</div>
+        <div class="panel-body">
+          <p><strong>System-generated presentation to reviewer:</strong></p>
+          <div class="system-box">
+            Subject made repeated incomplete submissions. File remains in automated penalty route pending closure review.
+          </div>
+          <p>
+            <span class="badge">Incomplete Submission</span>
+            <span class="badge">Repeated Contact</span>
+            <span class="badge">Potential Non-Compliance</span>
+          </p>
+          <p><strong>Risk score:</strong> <span style="color: var(--system); font-weight: 800;">82/100</span></p>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-header">ASLTP Antidote Verification Matrix</div>
+      <div class="panel-body" style="padding:0;">
+        <table class="matrix">
+          <thead>
+            <tr>
+              <th>ASLTP Stage</th>
+              <th>What the System Saw</th>
+              <th>Mandatory Human Review Question</th>
+              <th>Verify</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="stage">Affect</td>
+              <td>Urgent, repeated attempt to reach a human reviewer.</td>
+              <td>Is the response caused by emergency, distress, confusion, or deliberate evasion?</td>
+              <td class="checkbox-cell"><input type="checkbox" class="verify" /></td>
+            </tr>
+            <tr>
+              <td class="stage">Surface</td>
+              <td>Repeated portal submissions; missing reference field.</td>
+              <td>Is missing data a non-compliance signal or a result of emergency context?</td>
+              <td class="checkbox-cell"><input type="checkbox" class="verify" /></td>
+            </tr>
+            <tr>
+              <td class="stage">Label</td>
+              <td>Incomplete Submission; Repeated Contact; Potential Non-Compliance.</td>
+              <td>Are these labels legally justified, or should they be corrected before consequence?</td>
+              <td class="checkbox-cell"><input type="checkbox" class="verify" /></td>
+            </tr>
+            <tr>
+              <td class="stage">Transform</td>
+              <td>Risk score increased to 82/100; automated penalty route maintained.</td>
+              <td>Should the human response be transformed into enforcement risk?</td>
+              <td class="checkbox-cell"><input type="checkbox" class="verify" /></td>
+            </tr>
+            <tr>
+              <td class="stage">Present</td>
+              <td>Reviewer sees system summary before raw context unless antidote layout is used.</td>
+              <td>Does the final dashboard record fairly represent the human response and legal route?</td>
+              <td class="checkbox-cell"><input type="checkbox" class="verify" /></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="closure" style="margin-top:20px;">
+      <h2 style="margin-top:0;">Public-Law Closure Terminal</h2>
+      <p class="small">
+        The closure button unlocks only after all ASLTP stages are verified and reasons are entered.
+      </p>
+      <div class="closure-grid">
+        <div>
+          <label for="reasons"><strong>Reviewer reasons / closure justification:</strong></label>
+          <textarea id="reasons" placeholder="Explain whether the route, classification, human response, exception point, and system labels have been reviewed before consequence attaches."></textarea>
+        </div>
+        <div>
+          <button id="closureBtn" class="locked" disabled>Route Locked</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const boxes = document.querySelectorAll(".verify");
+    const reasons = document.getElementById("reasons");
+    const btn = document.getElementById("closureBtn");
+
+    function updateClosureButton() {
+      const allChecked = Array.from(boxes).every(cb => cb.checked);
+      const hasReasons = reasons.value.trim().length >= 20;
+
+      if (allChecked && hasReasons) {
+        btn.disabled = false;
+        btn.className = "active";
+        btn.textContent = "Execute Public-Law Closure";
+      } else {
+        btn.disabled = true;
+        btn.className = "locked";
+        btn.textContent = "Route Locked";
+      }
+    }
+
+    boxes.forEach(cb => cb.addEventListener("change", updateClosureButton));
+    reasons.addEventListener("input", updateClosureButton);
+
+    btn.addEventListener("click", () => {
+      alert("Closure executed for prototype demonstration only. In a real system, this would generate a review-ready enforcement record.");
+    });
+  </script>
+</body>
+</html>

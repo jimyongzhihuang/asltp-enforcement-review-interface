@@ -1,0 +1,51 @@
+{
+  "case_id": "DEMO-ENF-2026-001",
+  "disclaimer": "Fictional academic demonstration case. No real person, vehicle, public authority, or enforcement matter is represented.",
+  "detection_root": {
+    "timestamp": "2026-06-04T10:15:00Z",
+    "device_id": "DEMO-CAM-04",
+    "recorded_fact": "Vehicle recorded at 142 km/h in a 90 km/h zone",
+    "threshold_crossed": "52 km/h over posted limit",
+    "initial_route": "Automated penalty route"
+  },
+  "route_history": {
+    "initial_pathway": "Automated Penalty Route",
+    "current_status": "Paused at Pre-Consequence Closure Gate",
+    "human_review_required": true
+  },
+  "human_response": {
+    "raw_text": "Please stop sending automated messages. I am trying to reach a human officer. There is an emergency and I need to explain what happened before any penalty is finalized."
+  },
+  "asltp_log": {
+    "affect": {
+      "human_context": "Urgency, distress, repeated attempt to reach a human reviewer",
+      "system_surface": "Multiple submissions in short time period"
+    },
+    "surface": {
+      "system_surface": "Fragmented wording; repeated portal entries; missing reference field"
+    },
+    "label": {
+      "assigned_tags": [
+        "Incomplete Submission",
+        "Repeated Contact",
+        "Potential Non-Compliance"
+      ]
+    },
+    "transform": {
+      "risk_score": "82/100",
+      "automated_recommendation": "Maintain penalty route unless human reviewer identifies valid exception"
+    },
+    "present": {
+      "system_summary": "Subject made repeated incomplete submissions. File remains in automated penalty route pending closure review."
+    }
+  },
+  "closure_required": {
+    "reviewer_must_check": [
+      "Was the response a legally relevant explanation?",
+      "Was any emergency or exception considered?",
+      "Were system labels accepted, corrected, or rejected?",
+      "Did a responsible human authority give reasons?",
+      "Was the enforcement route legally closed before consequence?"
+    ]
+  }
+}
